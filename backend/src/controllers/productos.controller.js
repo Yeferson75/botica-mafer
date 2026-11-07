@@ -2,13 +2,6 @@ const supabase = require('../config/supabase');
 
 exports.listar = async (req, res) => {
   const { buscar, categoria } = req.query;
-
-  // Diagnóstico temporal
-  const todos = await supabase.from('productos').select('id, activo');
-  console.log('Clave empieza con:', (process.env.SUPABASE_KEY || 'VACIA').slice(0, 10));
-  console.log('Total filas visibles:', todos.data?.length, '| error:', todos.error?.message);
-  console.log('Filas activas:', todos.data?.filter(p => p.activo).length);
-
   let query = supabase
     .from('productos')
     .select('*, categorias(nombre)')

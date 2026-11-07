@@ -1,3 +1,4 @@
+const { createClient } = require('@supabase/supabase-js');
 const supabase = require('../config/supabase');
 
 exports.login = async (req, res) => {
@@ -7,7 +8,12 @@ exports.login = async (req, res) => {
     return res.status(400).json({ error: 'Correo y contraseña son obligatorios' });
   }
 
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  // Cliente temporal solo para autenticar: así no contamina el cliente principal
+  const authClient = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY, {
+    auth: { persistSession: false, autoRefreshToken: false }
+  });
+
+  const { data, error } = await authClient.auth.signInWithPassword({ email, password });
 
   if (error) {
     return res.status(401).json({ error: 'Credenciales incorrectas' });
